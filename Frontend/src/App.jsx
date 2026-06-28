@@ -8,7 +8,7 @@ import Vendors from './pages/Vendors';
 import Quotations from './pages/Quotations';
 import Comparison from './pages/Comparison';
 import MainLayout from './components/Layout/MainLayout';
-
+import Register from './pages/Register';
 import VendorLogin from './pages/VendorLogin';
 import VendorDashboard from './pages/VendorDashboard';
 import VendorProtectedRoute from './routes/VendorProtectedRoute';
@@ -19,6 +19,7 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/vendor-login" element={<VendorLogin />} />
           <Route
           path="/vendor-portal" element={

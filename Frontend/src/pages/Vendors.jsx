@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { getVendors, createVendor, updateVendor, deleteVendor } from '../api/vendor.api';
 import VendorFormModal from '../components/Vendor/VendorFormModal';
-import { Plus, Search, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Search, Pencil, Trash2, Users } from 'lucide-react';
+
+const avatarColors = ['bg-gold-500', 'bg-brand-700', 'bg-emerald-500', 'bg-rose-500', 'bg-indigo-500'];
 
 const Vendors = () => {
   const [vendors, setVendors] = useState([]);
@@ -66,7 +68,10 @@ const Vendors = () => {
   return (
     <div>
       <div className="animate-fade-up mb-6 flex items-center justify-between">
-        <h1 className="font-display text-xl font-semibold text-brand-950">Vendors</h1>
+        <div>
+          <h1 className="font-display text-xl font-semibold text-brand-950">Vendors</h1>
+          <p className="mt-0.5 text-sm text-slate-500">{vendors.length} vendor{vendors.length !== 1 ? 's' : ''} on record</p>
+        </div>
         <button
           onClick={handleAdd}
           className="flex items-center gap-2 rounded-md bg-brand-950 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:bg-brand-900 hover:shadow-lg hover:shadow-brand-950/20 active:scale-[0.98]"
@@ -91,7 +96,7 @@ const Vendors = () => {
         <table className="w-full text-left text-sm">
           <thead className="bg-brand-50 text-xs uppercase text-brand-900/60">
             <tr>
-              <th className="px-4 py-3">Vendor Name</th>
+              <th className="px-4 py-3">Vendor</th>
               <th className="px-4 py-3">Company</th>
               <th className="px-4 py-3">Email</th>
               <th className="px-4 py-3">Contact</th>
@@ -101,20 +106,38 @@ const Vendors = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={5} className="px-4 py-6 text-center text-slate-500">Loading...</td>
+                <td colSpan={5} className="px-4 py-10 text-center text-slate-500">Loading vendors...</td>
               </tr>
             ) : error ? (
               <tr>
-                <td colSpan={5} className="px-4 py-6 text-center text-red-600">{error}</td>
+                <td colSpan={5} className="px-4 py-10 text-center text-red-600">{error}</td>
               </tr>
             ) : vendors.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-6 text-center text-slate-500">No vendors found.</td>
+                <td colSpan={5} className="px-4 py-16 text-center">
+                  <Users className="mx-auto mb-2 h-8 w-8 text-slate-300" />
+                  <p className="text-slate-500">No vendors found. Add your first vendor to get started.</p>
+                </td>
               </tr>
             ) : (
-              vendors.map((vendor) => (
-                <tr key={vendor._id} className="border-t border-slate-100 transition hover:bg-brand-50/40">
-                  <td className="px-4 py-3 font-medium text-brand-950">{vendor.vendorName}</td>
+              vendors.map((vendor, i) => (
+                <tr
+                  key={vendor._id}
+                  className="animate-fade-up border-t border-slate-100 transition-colors duration-150 hover:bg-brand-50/40"
+                  style={{ animationDelay: `${i * 0.05}s` }}
+                >
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${
+                          avatarColors[i % avatarColors.length]
+                        }`}
+                      >
+                        {vendor.vendorName?.[0]?.toUpperCase()}
+                      </div>
+                      <span className="font-medium text-brand-950">{vendor.vendorName}</span>
+                    </div>
+                  </td>
                   <td className="px-4 py-3 text-slate-600">{vendor.companyName}</td>
                   <td className="px-4 py-3 text-slate-600">{vendor.email}</td>
                   <td className="px-4 py-3 text-slate-600">{vendor.contactNumber}</td>
