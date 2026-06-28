@@ -19,10 +19,7 @@ app.use(cors());
 app.use(express.json());
 const cors = require('cors');
 
-app.use(cors({
-  origin: 'https://vendor-hub-cyan.vercel.app', // apna Vercel URL
-  credentials: true
-}));
+
 
 // Connect to MongoDB
 connectDB();
