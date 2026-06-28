@@ -13,9 +13,11 @@ import VendorLogin from './pages/VendorLogin';
 import VendorDashboard from './pages/VendorDashboard';
 import VendorProtectedRoute from './routes/VendorProtectedRoute';
 import Profile from './pages/Profile';
+import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
   return (
+    <ThemeProvider>
     <BrowserRouter>
       <AuthProvider>
         <Routes>
@@ -50,6 +52,7 @@ function App() {
         </Routes>
       </AuthProvider>
     </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
