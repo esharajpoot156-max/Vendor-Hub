@@ -51,7 +51,7 @@ const VendorLogin = () => {
             Your quotes,<br />on your terms.
           </h1>
           <p className="animate-fade-up delay-200 mt-4 max-w-sm text-sm text-brand-900/60">
-            Review requests assigned to you and submit your pricing directly — no email chasing.
+            Review requests assigned to you and submit your pricing directly.
           </p>
         </div>
 

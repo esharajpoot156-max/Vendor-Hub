@@ -52,7 +52,7 @@ const Login = () => {
             Every quote,<br />one ledger.
           </h1>
           <p className="animate-fade-up delay-200 mt-4 max-w-sm text-sm text-white/50">
-            Manage vendors, request quotations, and compare proposals — without the email back-and-forth.
+            Manage vendors, request quotations, and compare proposals all in one place. Streamline your procurement process with ease.
           </p>
         </div>
 
