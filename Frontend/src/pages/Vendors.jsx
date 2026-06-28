@@ -27,45 +27,22 @@ const Vendors = () => {
     }
   };
 
+  useEffect(() => { fetchVendors(); }, []);
   useEffect(() => {
-    fetchVendors();
-  }, []);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchVendors(search);
-    }, 400);
+    const timer = setTimeout(() => fetchVendors(search), 400);
     return () => clearTimeout(timer);
   }, [search]);
 
-  const handleAdd = () => {
-    setEditingVendor(null);
-    setIsModalOpen(true);
-  };
-
-  const handleEdit = (e, vendor) => {
-    e.stopPropagation();
-    setEditingVendor(vendor);
-    setIsModalOpen(true);
-  };
-
+  const handleAdd = () => { setEditingVendor(null); setIsModalOpen(true); };
+  const handleEdit = (e, vendor) => { e.stopPropagation(); setEditingVendor(vendor); setIsModalOpen(true); };
   const handleDelete = async (e, id) => {
     e.stopPropagation();
     if (!window.confirm('Are you sure you want to delete this vendor?')) return;
-    try {
-      await deleteVendor(id);
-      fetchVendors(search);
-    } catch (err) {
-      alert(err.response?.data?.message || 'Failed to delete vendor');
-    }
+    try { await deleteVendor(id); fetchVendors(search); } catch (err) { alert(err.response?.data?.message || 'Failed to delete vendor'); }
   };
-
   const handleSubmit = async (formData) => {
-    if (editingVendor) {
-      await updateVendor(editingVendor._id, formData);
-    } else {
-      await createVendor(formData);
-    }
+    if (editingVendor) await updateVendor(editingVendor._id, formData);
+    else await createVendor(formData);
     fetchVendors(search);
   };
 
@@ -73,12 +50,12 @@ const Vendors = () => {
     <div>
       <div className="animate-fade-up mb-6 flex items-center justify-between">
         <div>
-          <h1 className="font-display text-xl font-semibold text-brand-950">Vendors</h1>
-          <p className="mt-0.5 text-sm text-slate-500">{vendors.length} vendor{vendors.length !== 1 ? 's' : ''} on record</p>
+          <h1 className="font-display text-xl font-semibold text-brand-950 dark:text-white">Vendors</h1>
+          <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{vendors.length} vendor{vendors.length !== 1 ? 's' : ''} on record</p>
         </div>
         <button
           onClick={handleAdd}
-          className="flex items-center gap-2 rounded-md bg-brand-950 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:bg-brand-900 hover:shadow-lg hover:shadow-brand-950/20 active:scale-[0.98]"
+          className="flex items-center gap-2 rounded-md bg-brand-950 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:bg-brand-900 hover:shadow-lg hover:shadow-brand-950/20 active:scale-[0.98] dark:bg-gold-500 dark:text-brand-950 dark:hover:bg-gold-600"
         >
           <Plus className="h-4 w-4" />
           Add Vendor
@@ -92,15 +69,15 @@ const Vendors = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by name, company, or email..."
-          className="w-full rounded-md border border-slate-300 py-2 pl-9 pr-3 text-sm outline-none transition-all duration-200 focus:border-brand-700 focus:ring-2 focus:ring-brand-700/15"
+          className="w-full rounded-md border border-slate-300 py-2 pl-9 pr-3 text-sm outline-none transition-all duration-200 focus:border-brand-700 focus:ring-2 focus:ring-brand-700/15 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
         />
       </div>
 
-      <p className="animate-fade-up delay-200 mb-2 text-xs text-slate-400">Click on a vendor to view their details and quotation history</p>
+      <p className="animate-fade-up delay-200 mb-2 text-xs text-slate-400 dark:text-slate-500">Click on a vendor to view their details and quotation history</p>
 
-      <div className="animate-fade-up delay-200 overflow-hidden rounded-xl border border-slate-200 bg-white">
+      <div className="animate-fade-up delay-200 overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
         <table className="w-full text-left text-sm">
-          <thead className="bg-brand-50 text-xs uppercase text-brand-900/60">
+          <thead className="bg-brand-50 text-xs uppercase text-brand-900/60 dark:bg-slate-800 dark:text-slate-400">
             <tr>
               <th className="px-4 py-3">Vendor</th>
               <th className="px-4 py-3">Company</th>
@@ -111,18 +88,14 @@ const Vendors = () => {
           </thead>
           <tbody>
             {loading ? (
-              <tr>
-                <td colSpan={5} className="px-4 py-10 text-center text-slate-500">Loading vendors...</td>
-              </tr>
+              <tr><td colSpan={5} className="px-4 py-10 text-center text-slate-500 dark:text-slate-400">Loading vendors...</td></tr>
             ) : error ? (
-              <tr>
-                <td colSpan={5} className="px-4 py-10 text-center text-red-600">{error}</td>
-              </tr>
+              <tr><td colSpan={5} className="px-4 py-10 text-center text-red-600">{error}</td></tr>
             ) : vendors.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-4 py-16 text-center">
-                  <Users className="mx-auto mb-2 h-8 w-8 text-slate-300" />
-                  <p className="text-slate-500">No vendors found. Add your first vendor to get started.</p>
+                  <Users className="mx-auto mb-2 h-8 w-8 text-slate-300 dark:text-slate-600" />
+                  <p className="text-slate-500 dark:text-slate-400">No vendors found. Add your first vendor to get started.</p>
                 </td>
               </tr>
             ) : (
@@ -130,35 +103,25 @@ const Vendors = () => {
                 <tr
                   key={vendor._id}
                   onClick={() => setViewingVendor(vendor)}
-                  className="animate-fade-up cursor-pointer border-t border-slate-100 transition-colors duration-150 hover:bg-brand-50/40"
+                  className="animate-fade-up cursor-pointer border-t border-slate-100 transition-colors duration-150 hover:bg-brand-50/40 dark:border-slate-800 dark:hover:bg-slate-800/60"
                   style={{ animationDelay: `${i * 0.05}s` }}
                 >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <div
-                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${
-                          avatarColors[i % avatarColors.length]
-                        }`}
-                      >
+                      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${avatarColors[i % avatarColors.length]}`}>
                         {vendor.vendorName?.[0]?.toUpperCase()}
                       </div>
-                      <span className="font-medium text-brand-950">{vendor.vendorName}</span>
+                      <span className="font-medium text-brand-950 dark:text-white">{vendor.vendorName}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-slate-600">{vendor.companyName}</td>
-                  <td className="px-4 py-3 text-slate-600">{vendor.email}</td>
-                  <td className="px-4 py-3 text-slate-600">{vendor.contactNumber}</td>
+                  <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{vendor.companyName}</td>
+                  <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{vendor.email}</td>
+                  <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{vendor.contactNumber}</td>
                   <td className="px-4 py-3 text-right">
-                    <button
-                      onClick={(e) => handleEdit(e, vendor)}
-                      className="mr-2 inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-500 transition hover:bg-brand-50 hover:text-brand-900"
-                    >
+                    <button onClick={(e) => handleEdit(e, vendor)} className="mr-2 inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-500 transition hover:bg-brand-50 hover:text-brand-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white">
                       <Pencil className="h-4 w-4" />
                     </button>
-                    <button
-                      onClick={(e) => handleDelete(e, vendor._id)}
-                      className="inline-flex h-8 w-8 items-center justify-center rounded-md text-red-500 transition hover:bg-red-50"
-                    >
+                    <button onClick={(e) => handleDelete(e, vendor._id)} className="inline-flex h-8 w-8 items-center justify-center rounded-md text-red-500 transition hover:bg-red-50 dark:hover:bg-red-950/40">
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </td>
@@ -169,13 +132,7 @@ const Vendors = () => {
         </table>
       </div>
 
-      <VendorFormModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleSubmit}
-        initialData={editingVendor}
-      />
-
+      <VendorFormModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSubmit={handleSubmit} initialData={editingVendor} />
       {viewingVendor && <VendorDrawer vendor={viewingVendor} onClose={() => setViewingVendor(null)} />}
     </div>
   );
