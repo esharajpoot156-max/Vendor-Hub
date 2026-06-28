@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getMyQuotations, vendorSubmitResponse } from '../api/vendorPortal.api';
 import RespondModal from '../components/Quotation/RespondModal';
+import VendorProfileDrawer from '../components/VendorPortal/VendorProfileDrawer';
 import { Truck, LogOut, FileText } from 'lucide-react';
 
 const statusColors = {
@@ -16,6 +17,7 @@ const VendorDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [respondTarget, setRespondTarget] = useState(null);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const vendor = JSON.parse(localStorage.getItem('vendorData') || '{}');
   const navigate = useNavigate();
@@ -59,16 +61,20 @@ const VendorDashboard = () => {
           <span className="font-display text-sm font-semibold text-brand-950">Vendor Portal</span>
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gold-100 text-xs font-semibold text-brand-900">
+          <button
+            onClick={() => setProfileOpen(true)}
+            title="View profile"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-gold-100 text-xs font-semibold text-brand-900 transition-all duration-200 hover:scale-110 hover:shadow-md active:scale-95"
+          >
             {vendor.vendorName?.[0]?.toUpperCase()}
-          </div>
+          </button>
           <div className="text-right">
             <p className="text-sm font-medium text-slate-900">{vendor.vendorName}</p>
             <p className="text-xs text-slate-500">{vendor.companyName}</p>
           </div>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-1.5 rounded-md border border-slate-200 px-3 py-1.5 text-sm text-slate-500 transition hover:border-slate-300 hover:text-slate-800"
+            className="flex items-center gap-1.5 rounded-md border border-slate-200 px-3 py-1.5 text-sm text-slate-500 transition-all duration-200 hover:border-red-200 hover:bg-red-50 hover:text-red-600 active:scale-95"
           >
             <LogOut className="h-4 w-4" />
             Logout
@@ -148,6 +154,8 @@ const VendorDashboard = () => {
         onSubmit={handleRespond}
         quotation={respondTarget}
       />
+
+      <VendorProfileDrawer isOpen={profileOpen} onClose={() => setProfileOpen(false)} vendor={vendor} />
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getVendors, createVendor, updateVendor, deleteVendor } from '../api/vendor.api';
 import VendorFormModal from '../components/Vendor/VendorFormModal';
+import VendorDrawer from '../components/Vendor/VendorDrawer';
 import { Plus, Search, Pencil, Trash2, Users } from 'lucide-react';
 
 const avatarColors = ['bg-gold-500', 'bg-brand-700', 'bg-emerald-500', 'bg-rose-500', 'bg-indigo-500'];
@@ -11,6 +12,7 @@ const Vendors = () => {
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingVendor, setEditingVendor] = useState(null);
+  const [viewingVendor, setViewingVendor] = useState(null);
   const [error, setError] = useState('');
 
   const fetchVendors = async (searchTerm = '') => {
@@ -41,12 +43,14 @@ const Vendors = () => {
     setIsModalOpen(true);
   };
 
-  const handleEdit = (vendor) => {
+  const handleEdit = (e, vendor) => {
+    e.stopPropagation();
     setEditingVendor(vendor);
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (e, id) => {
+    e.stopPropagation();
     if (!window.confirm('Are you sure you want to delete this vendor?')) return;
     try {
       await deleteVendor(id);
@@ -92,6 +96,8 @@ const Vendors = () => {
         />
       </div>
 
+      <p className="animate-fade-up delay-200 mb-2 text-xs text-slate-400">Click on a vendor to view their details and quotation history</p>
+
       <div className="animate-fade-up delay-200 overflow-hidden rounded-xl border border-slate-200 bg-white">
         <table className="w-full text-left text-sm">
           <thead className="bg-brand-50 text-xs uppercase text-brand-900/60">
@@ -123,7 +129,8 @@ const Vendors = () => {
               vendors.map((vendor, i) => (
                 <tr
                   key={vendor._id}
-                  className="animate-fade-up border-t border-slate-100 transition-colors duration-150 hover:bg-brand-50/40"
+                  onClick={() => setViewingVendor(vendor)}
+                  className="animate-fade-up cursor-pointer border-t border-slate-100 transition-colors duration-150 hover:bg-brand-50/40"
                   style={{ animationDelay: `${i * 0.05}s` }}
                 >
                   <td className="px-4 py-3">
@@ -143,13 +150,13 @@ const Vendors = () => {
                   <td className="px-4 py-3 text-slate-600">{vendor.contactNumber}</td>
                   <td className="px-4 py-3 text-right">
                     <button
-                      onClick={() => handleEdit(vendor)}
+                      onClick={(e) => handleEdit(e, vendor)}
                       className="mr-2 inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-500 transition hover:bg-brand-50 hover:text-brand-900"
                     >
                       <Pencil className="h-4 w-4" />
                     </button>
                     <button
-                      onClick={() => handleDelete(vendor._id)}
+                      onClick={(e) => handleDelete(e, vendor._id)}
                       className="inline-flex h-8 w-8 items-center justify-center rounded-md text-red-500 transition hover:bg-red-50"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -168,6 +175,8 @@ const Vendors = () => {
         onSubmit={handleSubmit}
         initialData={editingVendor}
       />
+
+      {viewingVendor && <VendorDrawer vendor={viewingVendor} onClose={() => setViewingVendor(null)} />}
     </div>
   );
 };

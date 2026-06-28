@@ -17,12 +17,16 @@ const Navbar = () => {
         Welcome back, <span className="font-medium text-slate-700">{user?.name}</span>
       </p>
       <div className="flex items-center gap-4">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-900">
+        <button
+          onClick={() => navigate('/profile')}
+          title="View profile"
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-900 transition-all duration-200 hover:scale-110 hover:shadow-md active:scale-95"
+        >
           {user?.name?.[0]?.toUpperCase()}
-        </div>
+        </button>
         <button
           onClick={handleLogout}
-          className="flex items-center gap-1.5 rounded-md border border-slate-200 px-3 py-1.5 text-sm text-slate-500 transition hover:border-slate-300 hover:text-slate-800"
+          className="flex items-center gap-1.5 rounded-md border border-slate-200 px-3 py-1.5 text-sm text-slate-500 transition-all duration-200 hover:border-red-200 hover:bg-red-50 hover:text-red-600 active:scale-95"
         >
           <LogOut className="h-4 w-4" />
           Logout
