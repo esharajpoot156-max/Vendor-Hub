@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 
-const emptyForm = { vendorName: '', companyName: '', email: '', contactNumber: '', address: '' };
+const emptyForm = { vendorName: '', companyName: '', email: '', password: '', contactNumber: '', address: '' };
 
 const VendorFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   const [form, setForm] = useState(emptyForm);
@@ -14,6 +14,7 @@ const VendorFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
         vendorName: initialData.vendorName || '',
         companyName: initialData.companyName || '',
         email: initialData.email || '',
+        password: '',
         contactNumber: initialData.contactNumber || '',
         address: initialData.address || '',
       });
@@ -33,6 +34,14 @@ const VendorFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
     if (!form.companyName.trim()) newErrors.companyName = 'Company name is required';
     if (!form.email.trim()) newErrors.email = 'Email is required';
     else if (!/^\S+@\S+\.\S+$/.test(form.email)) newErrors.email = 'Enter a valid email';
+
+    // Password required only when adding a NEW vendor
+    if (!initialData && !form.password.trim()) {
+      newErrors.password = 'Password is required (vendor will use this to log in)';
+    } else if (form.password && form.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+
     if (!form.contactNumber.trim()) newErrors.contactNumber = 'Contact number is required';
     if (!form.address.trim()) newErrors.address = 'Address is required';
     return newErrors;
@@ -47,7 +56,12 @@ const VendorFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
     }
     setSubmitting(true);
     try {
-      await onSubmit(form);
+      // On edit, don't send an empty password (keep existing one)
+      const payload = { ...form };
+      if (initialData && !payload.password) {
+        delete payload.password;
+      }
+      await onSubmit(payload);
       onClose();
     } catch (err) {
       setErrors({ form: err.response?.data?.message || 'Something went wrong' });
@@ -60,6 +74,12 @@ const VendorFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
     { name: 'vendorName', label: 'Vendor Name', placeholder: 'e.g. Ali Khan' },
     { name: 'companyName', label: 'Company Name', placeholder: 'e.g. Khan Traders' },
     { name: 'email', label: 'Email Address', placeholder: 'e.g. ali@khantraders.com', type: 'email' },
+    {
+      name: 'password',
+      label: initialData ? 'New Password (leave blank to keep current)' : 'Password',
+      placeholder: '••••••••',
+      type: 'password',
+    },
     { name: 'contactNumber', label: 'Contact Number', placeholder: 'e.g. 03001234567' },
   ];
 
@@ -77,6 +97,12 @@ const VendorFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
 
         {errors.form && (
           <div className="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-400">{errors.form}</div>
+        )}
+
+        {!initialData && (
+          <div className="mb-4 rounded-md bg-brand-50 px-3 py-2 text-xs text-brand-900/70 dark:bg-slate-800 dark:text-slate-400">
+            This email and password will be used by the vendor to log in to the Vendor Portal.
+          </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
